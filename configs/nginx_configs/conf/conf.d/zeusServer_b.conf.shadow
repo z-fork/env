@@ -1,0 +1,11 @@
+upstream proxyServer {
+	server 127.0.0.1:80 weight=2;
+}
+
+upstream proxyApis { 
+	server 127.0.0.1:8882 weight=2;
+} 
+
+upstream redisTool {
+        server 127.0.0.1:9992 weight=2;
+}

@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# supervisord   This scripts turns supervisord on (Kratos XingCloud)
+#
+# Author:       Mike McGrath <mmcgrath@redhat.com> (based off yumupdatesd)
+#
+# chkconfig:	- 95 04
+#
+# description:  supervisor is a process control utility.  It has a web based
+#               xmlrpc interface as well as a few other nifty features.
+# processname:  supervisord
+# config: /home/kratos/local/supervisor/supervisord.conf
+# pidfile: /home/kratos/run/supervisord.pid
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+
+supervisord=/home/kratos/local/bin/supervisord
+supervisorctl=/home/kratos/local/bin/supervisorctl
+conffile=/home/kratos/local/supervisor/supervisord.conf
+
+start() {
+	echo -n $"Starting supervisord: "
+	daemon ${supervisord} -c ${conffile}
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /home/kratos/lock/supervisord
+}
+
+stop() {
+	echo $"Stopping supervisor subprocesses ... "
+	${supervisorctl} -c ${conffile} stop all
+	RETVAL=$?
+	if [ $RETVAL == 0 ]; then
+		echo_success
+		echo
+		echo -n $"Stopping supervisord: "
+		killproc supervisord
+		RETVAL=$?
+		echo
+		[ $RETVAL -eq 0 ] && rm -f /home/kratos/lock/supervisord
+	else
+		echo_failure
+		echo
+		exit 1
+	fi
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop) 
+	stop
+	;;
+  restart|force-reload|reload)
+	restart
+	;;
+  condrestart)
+	[ -f /home/kratos/lock/supervisord ] && restart
+	;;
+  status)
+	status supervisord
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+	exit 1
+esac
+
+exit $RETVAL
