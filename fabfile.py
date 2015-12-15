@@ -27,8 +27,8 @@ class Stage(namedtuple('Stage', 'name hosts')):
 STAGES = {
     stage.name: stage
     for stage in [
-        # Stage('online', hosts=['115.159.159.12', '115.159.161.183'])
-        Stage('online', hosts=['115.159.159.12'])
+        Stage('online', hosts=['115.159.159.12', '115.159.161.183'])
+        # Stage('online', hosts=['115.159.159.12'])
     ]
 }
 
@@ -183,8 +183,10 @@ def copy_supervisord_service(kind='kratos'):
 def mysql_env():
     # remove_default()
     # install_mysql()
-    copy_mysql_cnf()
-    change_data_dir()
+    # copy_mysql_cnf()
+    # change_data_dir()
+    # clean '' user and change root passwd
+    exec_sql_script(CONFIG_DIR + '/mysql/sql_scripts/init.sql')
 
 
 def remove_default():
@@ -226,6 +228,30 @@ def change_data_dir():
 
     sudo('chown -R mysql:mysql /idata/mysql')
     sudo('mysql_install_db --user=mysql --datadir=/idata/mysql/data/')
+
+
+def exec_sql_script(local_sql_script_path, user='root'):
+    account = {
+        'root': 'qZePiMM3S34j3wW89MUEPcP9S',
+        'hunter': '3vUbY52IoP3mw7KwWPeItNrz8',
+    }
+
+    password = account.get(user)
+    if password is None:
+        print "Unknown user: %s" % user
+
+    if not local_sql_script_path.endswith('.sql'):
+        print "Invalid path: %s" % local_sql_script_path
+
+    remote_sql_dir = '/home/mongoo/sql_scripts/'
+    if not exists(remote_sql_dir):
+        run("mkdir -p %s" % remote_sql_dir)
+
+    script_name = local_sql_script_path.rsplit('/', 1)[-1]
+    print "script_name: %s" % script_name
+
+    Rsync().sync(local_sql_script_path, remote_sql_dir + script_name)
+    run("mysql --user=%s --password=%s < %s" % (user, password, remote_sql_dir + script_name))
 
 
 @task
