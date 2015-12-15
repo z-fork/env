@@ -72,10 +72,11 @@ def base_update():
 
 
 def yum_install():
-    package_list = ['vim', 'gcc', 'gcc-c++', 'make', 'tmux','libevent-devel.x86_64',
+    package_list = ['vim', 'gcc', 'gcc-c++', 'make', 'tmux', 'git', 'libevent-devel.x86_64',
                     'libevent.x86_64', 'libxml2-devel.x86_64', 'libxslt-devel.x86_64',
                     'java', 'zlib-devel.x86_64', 'zlib-devel.i686', 'bzip2-devel.x86_64',
-                    'sqlite-devel.x86_64', 'gettext.x86_64', 'openssl', 'openssl-devel', 'pcre-devel']
+                    'sqlite-devel.x86_64', 'gettext.x86_64', 'openssl', 'openssl-devel',
+                    'pcre-devel', 'freetype', 'freetype-devel', 'libpng-devel']
     for p in package_list:
         sudo('yum -y install {p}'.format(p=p))
 
