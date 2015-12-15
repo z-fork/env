@@ -1,18 +1,10 @@
 # coding: utf-8
 
 from collections import namedtuple
-from contextlib import contextmanager
-from distutils.util import strtobool
 from os.path import join, dirname
-import sys
-import urlparse
 
-import requests
-from lxml import etree
-from fabric.api import cd, env, execute, sudo, task, quiet, run
+from fabric.api import cd, env, sudo, task, run
 from fabric.contrib.files import exists
-from fabric.colors import red
-from fabric.decorators import runs_once
 
 from rsync import Rsync
 
