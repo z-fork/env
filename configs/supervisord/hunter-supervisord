@@ -9,25 +9,25 @@
 # description:  supervisor is a process control utility.  It has a web based
 #               xmlrpc interface as well as a few other nifty features.
 # processname:  supervisord
-# config: /home/kratos/local/supervisor/supervisord.conf
-# pidfile: /home/kratos/run/supervisord.pid
-#
+# config: /home/mongoo/local/supervisor/supervisord.conf
+# pidfile: /home/mongoo/run/supervisord.pid
+
 
 # source function library
 . /etc/rc.d/init.d/functions
 
 RETVAL=0
 
-supervisord=/home/kratos/local/bin/supervisord
-supervisorctl=/home/kratos/local/bin/supervisorctl
-conffile=/home/kratos/local/supervisor/supervisord.conf
+supervisord=/home/mongoo/local/bin/supervisord
+supervisorctl=/home/mongoo/local/bin/supervisorctl
+conffile=/home/mongoo/local/supervisor/supervisord.conf
 
 start() {
 	echo -n $"Starting supervisord: "
 	daemon ${supervisord} -c ${conffile}
 	RETVAL=$?
 	echo
-	[ $RETVAL -eq 0 ] && touch /home/kratos/lock/supervisord
+	[ $RETVAL -eq 0 ] && touch /home/mongoo/lock/supervisord
 }
 
 stop() {
@@ -41,7 +41,7 @@ stop() {
 		killproc supervisord
 		RETVAL=$?
 		echo
-		[ $RETVAL -eq 0 ] && rm -f /home/kratos/lock/supervisord
+		[ $RETVAL -eq 0 ] && rm -f /home/mongoo/lock/supervisord
 	else
 		echo_failure
 		echo
@@ -65,7 +65,7 @@ case "$1" in
 	restart
 	;;
   condrestart)
-	[ -f /home/kratos/lock/supervisord ] && restart
+	[ -f /home/mongoo/lock/supervisord ] && restart
 	;;
   status)
 	status supervisord
